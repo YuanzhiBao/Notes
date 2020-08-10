@@ -142,6 +142,8 @@ SELECT
 /*
 q10
 List all distinct genres and the number of titles associated with them.
+about recursive statement
+https://sqlite.org/lang_with.html
 */
 
 -- q10_test, recursive
