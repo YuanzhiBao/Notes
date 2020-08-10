@@ -60,3 +60,104 @@ select
 	group by decade
 	order by percentage desc, decade asc
 ;
+-- Non-aggregated values in SELECT output clause must appear in GROUP BY clause.
+-- Means only select group by clause
+-- Which can filter by HAVING keyword
+
+/*
+q6
+Count the number of titles in akas for each title in the titles table, and list only the top ten.
+ */
+-- implied there is duplicate title_id in the table. I missed this important info.
+
+.print "\n*********output from TA'ssolution*******\n"
+
+WITH translations AS (
+  SELECT title_id, count(*) as num_translations
+    FROM akas
+    GROUP BY title_id
+    ORDER BY num_translations DESC, title_id
+    LIMIT 10
+)
+SELECT titles.primary_title, translations.num_translations
+  FROM translations
+  JOIN titles
+  ON titles.title_id == translations.title_id
+  ORDER BY translations.num_translations DESC
+  ;
+
+
+.print "\n*********output from second solution*******\n"
+
+-- second solution by baoyuanzhi which is not need join function
+
+WITH translations AS (
+  SELECT title_id, count(*) as num_translations
+    FROM akas
+    GROUP BY title_id
+    ORDER BY num_translations DESC, title_id
+    LIMIT 10
+)
+select t.primary_title, translations.num_translations
+from titles as t, translations
+where t.title_id == translations.title_id
+;
+
+/*
+q7
+List the IMDB Top 250 movies along with its weighted rating.
+Details: The weighted rating of a movie is calculated according to the following formula:
+
+Weighted rating (WR) = (v/(v+m)) * R + (m/(v+m)) * C
+
+- R = average rating for the movie (mean), i.e. ratings.rating
+- v = number of votes for the movie, i.e. ratings.votes
+- m = minimum votes required to be listed in the Top 250 (current 25000)
+- C = weighted average rating of all movies
+Print the movie name along with its weighted rating. For example: The Shawshank Redemption|9.27408375213064.
+ */
+
+.print "\n*********output from TA's solution*******\n"
+
+-- with means you created a temp table
+
+WITH
+  av(average_rating) AS (
+    SELECT SUM(rating * votes) / SUM(votes)
+      FROM ratings
+      JOIN titles
+      ON titles.title_id == ratings.title_id AND titles.type == "movie" 
+  ),
+  mn(min_rating) AS (SELECT 25000.0)
+SELECT
+  primary_title,
+  (votes / (votes + min_rating)) * rating + (min_rating / (votes + min_rating)) * average_rating as weighed_rating
+  FROM ratings, av, mn
+  JOIN titles
+  ON titles.title_id == ratings.title_id and titles.type == "movie"
+  ORDER BY weighed_rating DESC
+  LIMIT 250
+  ;
+
+/*
+q10
+List all distinct genres and the number of titles associated with them.
+*/
+
+-- q10_test, recursive
+-- recursive must has two selects. and union/ union all combine them
+-- first select is a inital statement, second is the recursive part
+-- the name of the recursive must appear only once after the second select
+-- there must be the end statement as where in this example
+
+with recursive split (rest) as
+(
+		select genres || ',' from titles where title_id = "tt0000042"
+		union all
+		select
+			substr(rest, 0, instr(rest, ','))
+		from split
+		where rest != ''
+
+)
+select * from split;
