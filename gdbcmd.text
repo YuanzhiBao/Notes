@@ -1,0 +1,42 @@
+g++ -ggdb -Wall -o outputfile inputfile.cc
+
+<c> to continue execution.
+<n> for executing the next line.
+<s> to step into the function.
+
+p <variable>
+p <structure>
+p <*ptr>
+p array
+p array[5]@2 #offset 5, 2 print length
+watch <varitable>
+
+info breakpoint
+command 1
+ignore 1 1000 #ingore first breakpoint 1000 times
+d 1 #delete first breakpoint
+
+list 12
+list functionname
+
+#break into a line relative num to current line
+break(b) linenum
+b +linenum
+
+b filename:function
+b filename:linenum
+b <...> if condition
+
+info stack
+
+fin ##It'll execute to the point where function returns.
+where # tell the point where the program died
+frame # return the current line
+
+Method-I:
+  $ gdb --args program arg1 arg2 ... argN  
+  (gdb) r
+
+Method-II:
+  $ gdb program  
+  (gdb) r arg1 arg2 ... argN
