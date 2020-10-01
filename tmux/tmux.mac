@@ -1,0 +1,2 @@
+In the Terminal app  on your Mac, choose View > Allow Mouse Reporting
+#只有这样了tmux.conf里面的 set -g mouse on才能工作正常
