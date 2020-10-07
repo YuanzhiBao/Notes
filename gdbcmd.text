@@ -40,3 +40,8 @@ Method-I:
 Method-II:
   $ gdb program  
   (gdb) r arg1 arg2 ... argN
+
+
+
+give me 5 minutes I will change your view of GDB
+
